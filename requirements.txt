@@ -1,0 +1,9 @@
+python-dotenv
+pymongo
+Pyrogram
+TgCrypto
+Pillow
+feedparser
+beautifulsoup4
+html-to-json
+requests
