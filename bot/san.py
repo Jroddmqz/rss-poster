@@ -208,8 +208,12 @@ class Bruteforce:
         elif site == "allthefallen":
             try:
                 link = soup.find("a", string="Download").get("href")
+                if "?" in link:
+                    link = link.split("?")[0]
             except:
                 link = soup.find("a", string="View original").get("href")
+                if "?" in link:
+                    link = link.split("?")[0]
         elif site == "rule34":
             try:
                 link = soup.find("a")
