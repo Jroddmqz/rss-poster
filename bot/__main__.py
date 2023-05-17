@@ -87,10 +87,13 @@ async def run():
     await bot.start()
     bot.me = await bot.get_me()
 
+    regi = f"`Ejecutando rss:`"
+    for r in rss:
+        regi = regi + f"\n{r['rss_url']} "
+    await bot.send_message(log_group, regi)
+
     while True:
         tasks = [asyncio.create_task(process(rule)) for rule in rss]
-        regi = f"`Ejecutando rss`"
-        await bot.send_message(log_group, regi)
         await asyncio.gather(*tasks)
         await asyncio.sleep(60)
     # await pyrogram.idle()
