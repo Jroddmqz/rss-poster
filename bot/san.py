@@ -199,11 +199,17 @@ class Bruteforce:
                 link = soup.find("a", attrs={"id": "png"}).get("href")
             except:
                 link = soup.find("a", attrs={"id": "highres"}).get("href")
+
         elif site == "xbooru" or site == "realbooru" or site == "gelbooru":
             try:
                 link = soup.find("a", text="Original").get("href")
             except:
                 link = soup.find("a", text="Original image").get("href")
+        elif site == "allthefallen":
+            try:
+                link = soup.find("a", string="Download").get("href")
+            except:
+                link = soup.find("a", string="View original").get("href")
         elif site == "rule34":
             try:
                 link = soup.find("a")
@@ -216,7 +222,6 @@ class Bruteforce:
                     except:
                         break
                 link = ahrf[0]
-        print(link)
         return link
 
     def rule34(self, url):
