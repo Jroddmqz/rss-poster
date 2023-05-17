@@ -56,6 +56,8 @@ async def process(_item_):
                 archive = archive.replace(" ", "%20")
             elif 'yande.re' in entry['link']:
                 archive = b.booru(entry['link'], site='yandere')
+            elif 'allthefallen' in entry['link']:
+                archive = b.booru(entry['link'], site='allthefallen')
             else:
                 continue
         except Exception as e:
