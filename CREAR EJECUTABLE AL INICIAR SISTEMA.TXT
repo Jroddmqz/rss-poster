@@ -1,0 +1,57 @@
+CREAR EJECUTABLE AL INICIAR SISTEMA
+1. Crear archivo en la carpeta del bot
+sudo nano /etc/systemd/system/bot.service
+
+[Unit]
+Description=r34 poster
+After=network.target
+
+[Service]
+ExecStart=/home/kbni/rule34poster/venv/bin/python -m bot
+WorkingDirectory=/home/kbni/rule34poster
+User=kbni
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+
+2. Activar el servicio
+
+sudo systemctl enable bot.service
+
+
+
+Opcional- Revisar el estatus del archivo
+
+journalctl -u bot.service
+
+
+
+
+PROGRAMAR REINICIO CADA 24 HORAS A LAS 00:00HRS
+
+1. Crea un archivo de temporizador en el directorio /etc/systemd/system con un nombre como bot.timer:
+
+sudo nano /etc/systemd/system/bot.timer
+
+[Unit]
+Description=Reiniciar el servicio Bot cada 24 horas
+
+[Timer]
+OnCalendar=*-*-* 00:00:00
+Unit=bot.service
+
+[Install]
+WantedBy=timers.target
+
+
+2. Reinicia systemd para cargar el nuevo temporizador:
+
+sudo systemctl daemon-reload
+
+
+Habilita y comienza el temporizador:
+
+sudo systemctl enable bot.timer
+sudo systemctl start bot.timer
