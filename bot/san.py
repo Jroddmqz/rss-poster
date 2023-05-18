@@ -215,21 +215,31 @@ class Bruteforce:
                 if "?" in link:
                     link = link.split("?")[0]
         elif site == "rule34":
-            try:
-                link = soup.find("a")
-            except:
-                stats = soup.find(attrs={"class": "link-list"})
-                ahrf = [a.a.get("href") for a in stats.find_all("li")]
-                for h in ahrf:
-                    try:
-                        ahrf.remove("#")
-                    except:
-                        break
-                link = ahrf[0]
+            headers = {
+                "User-Agent": "Mi Agente de Usuario Personalizado",
+                "Accept-Language": "es-ES,es;q=0.9,en;q=0.8"
+            }
+            response = requests.get(url, headers=headers)
+            soup = BeautifulSoup(response.content, "html.parser")
+            stats = soup.find(attrs={"class": "link-list"})
+            ahrf = [a.a.get("href") for a in stats.find_all("li")]
+            for h in ahrf:
+                try:
+                    ahrf.remove("#")
+                except:
+                    break
+            if "?" in ahrf[0]:
+                link = ahrf[0].split("?")[0]
         return link
 
+
     def rule34(self, url):
-        soup = BeautifulSoup(requests.get(url).content, "html.parser")
+        headers = {
+            "User-Agent": "Mi Agente de Usuario Personalizado",
+            "Accept-Language": "es-ES,es;q=0.9,en;q=0.8"
+        }
+        response = requests.get(url, headers=headers)
+        soup = BeautifulSoup(response.content, "html.parser")
         stats = soup.find(attrs={"class": "link-list"})
         ahrf = [a.a.get("href") for a in stats.find_all("li")]
         for h in ahrf:
@@ -237,7 +247,9 @@ class Bruteforce:
                 ahrf.remove("#")
             except:
                 break
-        return ahrf[0]
+        if "?" in ahrf[0]:
+            link = ahrf[0].split("?")[0]
+        return link
 
     def reddit(self, url):
         href = re.compile(r"https://i")
