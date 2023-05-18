@@ -17,9 +17,6 @@ if not os.path.exists(temp):
     os.makedirs(temp)
 
 db = Mclient["rss"]
-#collections = {}
-#for tag in tags:
-#    collections[tag['tag']] = db[tag['tag']]
 
 
 async def process(_item_):
@@ -42,10 +39,9 @@ async def process(_item_):
         except Exception as e:
             logging.error("[RSSPOSTER] -1 Failed: " + f"{str(e)}")
             continue
-
-    for entry in entries:
+    inverted_entries = entries[::-1]
+    for entry in inverted_entries:
         try:
-            # print(f"{entry['title']}: {entry['link']}")
             if 'danbooru' in entry['link']:
                 archive = b.danbooru(entry['link'])
             elif 'lolibooru' in entry['link']:
@@ -89,9 +85,12 @@ async def run():
     await bot.start()
     bot.me = await bot.get_me()
 
-    regi = f"`Ejecutando rss:`"
+    now_ = datetime.now()
+    date_time = now_.strftime("%y%m%d %H.%M.%S")
+
+    regi = f"`{date_time} - Ejecutando rss:`"
     for r in rss:
-        regi = regi + f"\n{r['rss_url']} "
+        regi = regi + f"\n`{r['rss_url']}` "
     await bot.send_message(log_group, regi)
 
     while True:
