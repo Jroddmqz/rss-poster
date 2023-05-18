@@ -222,14 +222,15 @@ class Bruteforce:
             response = requests.get(url, headers=headers)
             soup = BeautifulSoup(response.content, "html.parser")
             stats = soup.find(attrs={"class": "link-list"})
-            ahrf = [a.a.get("href") for a in stats.find_all("li")]
-            for h in ahrf:
-                try:
-                    ahrf.remove("#")
-                except:
-                    break
-            if "?" in ahrf[0]:
-                link = ahrf[0].split("?")[0]
+
+            for a in stats.find_all("li"):
+                if a.a['href'] and a.a['href'] != '#':
+                    ahrf = a.a['href']
+                    if "?" in ahrf:
+                        ahrf = ahrf.split("?")[0]
+                    if "https://rule34.xxx//" in ahrf:
+                        ahrf = ahrf.replace("https://rule34.xxx//", "https://rule34.xxx/")
+                    link = ahrf
         return link
 
 
