@@ -118,7 +118,7 @@ async def run():
     while True:
         tasks = [asyncio.create_task(process(rule)) for rule in rss]
         await asyncio.gather(*tasks)
-        await asyncio.sleep(60)
+        await asyncio.sleep(120)
     # await pyrogram.idle()
 
 
