@@ -7,3 +7,7 @@ feedparser
 beautifulsoup4
 html-to-json
 requests
+moviepy
+opencv-python
+bs4
+imageio
