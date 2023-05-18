@@ -41,6 +41,7 @@ async def process(_item_):
             continue
     inverted_entries = entries[::-1]
     for entry in inverted_entries:
+        capy = f"{entry['title']}\n{_caption}"
         try:
             if 'danbooru' in entry['link']:
                 archive = b.danbooru(entry['link'])
@@ -54,6 +55,9 @@ async def process(_item_):
                 archive = b.booru(entry['link'], site='yandere')
             elif 'allthefallen' in entry['link']:
                 archive = b.booru(entry['link'], site='allthefallen')
+            elif 'rule34' in entry['link']:
+                archive = b.booru(entry['link'], site='rule34')
+                capy = ""
             else:
                 continue
         except Exception as e:
@@ -71,7 +75,6 @@ async def process(_item_):
             with open(os.path.join(temp, filename), "wb") as f:
                 f.write(response.content)
             file_path = f"{temp}{filename}"
-            capy = f"{entry['title']}\n{_caption}"
 
             await upload_file(bot, file_path, _chat_id, capy, ext_)
         else:
