@@ -57,7 +57,7 @@ async def process(_item_):
                 archive = b.booru(entry['link'], site='allthefallen')
             elif 'rule34' in entry['link']:
                 archive = b.booru(entry['link'], site='rule34')
-                capy = ""
+                capy = f"||{entry['title']}||\n{_caption}"
             else:
                 continue
         except Exception as e:
@@ -78,7 +78,26 @@ async def process(_item_):
 
             await upload_file(bot, file_path, _chat_id, capy, ext_)
         else:
-            print("Error al descargar la imagen.")
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+            }
+            response = requests.get(archive, headers=headers)
+            if response.status_code == 200:
+                # filename = os.path.basename(archive)
+                path_, ext_ = os.path.splitext(archive)
+                now = datetime.now()
+                date_time = now.strftime("%y%m%d_%H%M%S")
+                random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=2))
+                filename = f"{date_time}{random_chars}{ext_}"
+                with open(os.path.join(temp, filename), "wb") as f:
+                    f.write(response.content)
+                file_path = f"{temp}{filename}"
+
+                await upload_file(bot, file_path, _chat_id, capy, ext_)
+            else:
+                print("Error al descargar la imagen.")
 
 
 async def run():
