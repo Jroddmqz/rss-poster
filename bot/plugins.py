@@ -3,9 +3,11 @@ import asyncio
 import logging
 import time
 import feedparser
-
+import cv2
+import imageio
 from PIL import Image
 from bot import Mclient
+from moviepy.video.io.VideoFileClip import VideoFileClip
 
 
 def resizer(_image_):
@@ -65,14 +67,18 @@ async def upload_file(client, file_path, chat_id, capy, ext_):
             if os.path.exists(new_file):
                 os.remove(new_file)
         elif ext_.lower() in {'.mp4', '.avi', '.mkv', '.mov'}:
+            _thumbs_ = thumbail_(file_path)
+            print(_thumbs_)
             try:
-                _sent_ = await client.send_video(chat_id, video=file_path, caption=str(capy))
+                _sent_ = await client.send_video(chat_id, video=file_path, thumb=_thumbs_, caption=str(capy))
                 await asyncio.sleep(1)
             except:
                 try:
                     _sent_ = await client.send_document(chat_id, document=file_path, caption=str(capy))
                 except Exception as e:
                     logging.error("[RSSPOSTER] - Failed: " + f"{str(e)}")
+            if os.path.exists(_thumbs_):
+                os.remove(_thumbs_)
         else:
             try:
                 _sent_ = await client.send_document(chat_id, document=file_path, caption=str(capy))
@@ -108,3 +114,32 @@ async def get_feed_entries(url):
             pass
 
     return entries
+
+
+def thumbail_(_video_):
+    path_, ext_ = os.path.splitext(_video_)
+    namethumb = path_ + ".jpg"
+    if ext_.lower() == ".mp4":
+        cap = cv2.VideoCapture(_video_)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        frame_to_capture = int(total_frames / 3)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_to_capture)
+        ret, frame = cap.read()
+        cv2.imwrite(namethumb, frame)
+        cap.release()
+    elif ext_.lower() == ".mkv":
+        video = VideoFileClip(_video_)
+        thumbnail = video.get_frame(20)
+        imageio.imwrite(namethumb, thumbnail)
+        video.close()
+    elif ext_.lower() == ".mov":
+        try:
+            video = VideoFileClip(_video_)
+            thumbnail = video.get_frame(5)
+            imageio.imwrite(namethumb, thumbnail)
+            video.write_videofile(path_ + ".mp4")
+            video.close()
+        except:
+            print("El archivo MOV parece estar dañado.")
+            return None
+    return namethumb
