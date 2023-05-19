@@ -57,13 +57,17 @@ async def process(_item_):
                 archive = b.booru(entry['link'], site='allthefallen')
             elif 'rule34' in entry['link']:
                 archive = b.booru(entry['link'], site='rule34')
-                capy = f"||{entry['title']}||\n{_caption}"
+                capy = f"{_caption}"
+                if archive is None:
+                    continue
             else:
                 continue
         except Exception as e:
             logging.error("[RSsPOSTER] -2 Failed: " + f"{str(e)}")
             continue
-
+        if archive is None:
+            print(f"omitiendo item:{entry['link']} - {archive} ")
+            continue
         response = requests.get(archive)
         if response.status_code == 200:
             # filename = os.path.basename(archive)
