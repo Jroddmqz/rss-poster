@@ -107,6 +107,7 @@ async def get_feed_entries(url):
                 "link": entry.link,
                 "updated": entry.updated,
                 "author": entry.author,
+                "summary": entry.summary,
             }
             entries.append(entry_data)
         except:

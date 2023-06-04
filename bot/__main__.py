@@ -23,6 +23,8 @@ async def process(_item_):
     _url = _item_['rss_url']
     _chat_id = await is_chat(bot, _item_['channel'])
     _caption = _item_['caption']
+    _blacklist = _item_['blacklist']
+    _blacklist = _blacklist.split()
     collection = db[f"{_chat_id}"]
 
     b = Bruteforce()
@@ -42,6 +44,11 @@ async def process(_item_):
     inverted_entries = entries[::-1]
     for entry in inverted_entries:
         capy = f"{entry['title']}\n{_caption}"
+        _summary = entry['summary']
+        _summary = _summary.split()
+        for x in _blacklist:
+            if x in _summary:
+                continue
         try:
             if 'danbooru' in entry['link']:
                 archive = b.danbooru(entry['link'])
